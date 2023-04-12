@@ -65,6 +65,7 @@ async def bot_polling():
 			data['step'] = 0
 			data['emotion'] = emotion
 		await bot.send_message(message.chat.id, PRE_QUESTS[emotion][0], reply_markup=none)
+		await asyncio.sleep(5)
 		await bot.send_message(message.chat.id, message_text, reply_markup=markup)
 		await QuestStep.pre_step.set()
 
@@ -91,6 +92,7 @@ async def bot_polling():
 
 		photo = MEDIA[emotions][0]  # обираємо потрібне фото під індексом(0) зі словника
 		await bot.send_photo(message.chat.id, photo=InputFile.from_url(photo))
+		await asyncio.sleep(2)
 
 		await bot.send_message(message.chat.id, ALL_QUESTS[emotions][step], reply_markup=keyF)  # відправляємо завдання 1
 		await QuestStep.pre_step.set() if emotions == 'я не розумію що відчуваю' else await QuestStep.feedback.set()
@@ -105,10 +107,13 @@ async def bot_polling():
 
 		photo = MEDIA[emotions][1]  # обираємо потрібне фото під індексом(1) зі словника
 		await bot.send_photo(message.chat.id, photo=InputFile.from_url(photo))
+		await asyncio.sleep(2)
 
 		await bot.send_message(message.chat.id, ALL_QUESTS[emotions][step], reply_markup=keyF)  # відправляємо завдання
 
 		if emotions == 'тривога':  # відправляємо додатково аудіофайл якщо обрана 'тривога'
+			await asyncio.sleep(2)
+			await bot.send_chat_action(message.chat.id, action='upload_audio')
 			try:
 				await bot.send_audio(message.chat.id, 'CQACAgIAAxkBAANCZDQqVqaPjMN8TlWfrAkDdytUG1IAAg4rAAL665FJr69UsDX_rRwvBA')
 			except:
@@ -162,7 +167,7 @@ async def timer():  # функція котра відповідає за рет
 	while True:
 		user_data = check_retarget()
 		print(user_data, '>>> user_data')
-		await asyncio.sleep(400)
+		await asyncio.sleep(40000)
 
 		if len(user_data) > 0:
 			for data in user_data:

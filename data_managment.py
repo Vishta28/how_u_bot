@@ -74,13 +74,13 @@ def check_retarget():
 			now = datetime.now().replace(microsecond=0)
 			bd = datetime.strptime(data[1], '%Y-%m-%d %H:%M:%S')
 
-			if data[0] != 'done' and now > bd + timedelta(minutes=2):
+			if data[0] != 'done' and now > bd + timedelta(hours=4):
 				cursor.execute(f"SELECT user_id, emotion, retarget FROM feelings WHERE time = '{data[1]}'")
 				small_retargert = cursor.fetchone()
 				message_ready_time.append(small_retargert)
 				print('small_retarget', small_retargert)
 
-			elif now > bd + timedelta(minutes=1):
+			elif now > bd + timedelta(hours=5):
 				cursor.execute(f"SELECT user_id, emotion, retarget FROM feelings WHERE time = '{data[1]}'")
 				long_retargert = cursor.fetchone()
 				message_ready_time.append(long_retargert)
