@@ -65,7 +65,10 @@ async def bot_polling():
 			data['step'] = 0
 			data['emotion'] = emotion
 		await bot.send_message(message.chat.id, PRE_QUESTS[emotion][0], reply_markup=none)
+
 		await asyncio.sleep(5)
+		await bot.send_chat_action(message.chat.id, action='typing')
+
 		await bot.send_message(message.chat.id, message_text, reply_markup=markup)
 		await QuestStep.pre_step.set()
 
@@ -88,10 +91,10 @@ async def bot_polling():
 		async with state.proxy() as data:  # распаковываем наши переменные
 			emotions = data['emotion']
 			step = data['step']
-		await bot.send_chat_action(message.chat.id, action='typing')
 
 		photo = MEDIA[emotions][0]  # обираємо потрібне фото під індексом(0) зі словника
 		await bot.send_photo(message.chat.id, photo=InputFile.from_url(photo))
+		await bot.send_chat_action(message.chat.id, action='typing')
 		await asyncio.sleep(2)
 
 		await bot.send_message(message.chat.id, ALL_QUESTS[emotions][step], reply_markup=keyF)  # відправляємо завдання 1
@@ -112,8 +115,8 @@ async def bot_polling():
 		await bot.send_message(message.chat.id, ALL_QUESTS[emotions][step], reply_markup=keyF)  # відправляємо завдання
 
 		if emotions == 'тривога':  # відправляємо додатково аудіофайл якщо обрана 'тривога'
-			await asyncio.sleep(2)
 			await bot.send_chat_action(message.chat.id, action='upload_audio')
+			await asyncio.sleep(2)
 			try:
 				await bot.send_audio(message.chat.id, 'CQACAgIAAxkBAANCZDQqVqaPjMN8TlWfrAkDdytUG1IAAg4rAAL665FJr69UsDX_rRwvBA')
 			except:
@@ -130,6 +133,7 @@ async def bot_polling():
 			step = data['step']
 
 		await bot.send_message(message.chat.id, 'Вправа завершена!')
+		await asyncio.sleep(1)
 		await bot.send_message(message.chat.id, '<b>Чи покращився зараз ваш стан? 💙</b>', reply_markup=keyC, parse_mode='HTML')
 		await QuestStep.pre_step.set() if step < 2 else await QuestStep.final.set()
 
@@ -140,6 +144,7 @@ async def bot_polling():
 			emotion = data['emotion']
 			update_table(step, emotion, message.text, datetime.now().replace(microsecond=0), message.from_user.id)  # оновлюємо таблицю
 		await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
+		await asyncio.sleep(1)
 		await bot.send_message(message.chat.id, 'Сподіваюсь ми допомогли вам покращити ваш стан. 🧘‍♀\n\n'
 												'Якщо ви відчуваєте що це було цінним для вас, підтримайте наш проєкт. 💙', reply_markup=inl_keyR)
 		await QuestStep.emotion.set()
