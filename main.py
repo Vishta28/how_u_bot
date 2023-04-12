@@ -66,8 +66,8 @@ async def bot_polling():
 			data['emotion'] = emotion
 		await bot.send_message(message.chat.id, PRE_QUESTS[emotion][0], reply_markup=none)
 
-		await asyncio.sleep(5)
 		await bot.send_chat_action(message.chat.id, action='typing')
+		await asyncio.sleep(4)
 
 		await bot.send_message(message.chat.id, message_text, reply_markup=markup)
 		await QuestStep.pre_step.set()
