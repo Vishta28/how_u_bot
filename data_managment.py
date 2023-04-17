@@ -119,8 +119,7 @@ async def emotion_state_check(step, user_id, message):
 			else:
 				return 10
 			previus_state = cursor.fetchone()
-			print(previus_state[0][:1])
-		return int((previus_state[0][:1]))
+		return int((previus_state[0][:-1]))
 	except Exception as er:
 		print(f'Error with postgres >>> {er}')
 	finally:
