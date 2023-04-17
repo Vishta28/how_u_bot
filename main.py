@@ -36,7 +36,7 @@ async def bot_polling():
 		await bot.send_message(message.chat.id, BOT_TEXT['bot_description'][0])  # беремо значення зі списку bot_description
 
 		await bot.send_chat_action(message.chat.id, action='typing')  # бот імітує написання повідомлення
-		#await asyncio.sleep(10)
+		await asyncio.sleep(10)
 
 		await bot.send_message(message.chat.id, BOT_TEXT['bot_description'][1], reply_markup=keyA)
 		await QuestStep.emotion.set()
