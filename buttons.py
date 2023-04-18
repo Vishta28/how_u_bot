@@ -53,7 +53,7 @@ none = ReplyKeyboardRemove()
 inl_keyR = InlineKeyboardMarkup(row_width=1)
 inl_button1 = InlineKeyboardButton(text='Повернутися до технік 🔬',
 									callback_data='techniks')
-inl_button2 = InlineKeyboardButton(text='Відповісти або задати власне питання 🗣️',
+inl_button2 = InlineKeyboardButton(text='Поставити питання 🗣️',
 									callback_data='question')
 inl_button3 = InlineKeyboardButton(text='Підтримати проєкт 💸',
 									callback_data='donate')

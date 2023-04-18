@@ -7,7 +7,8 @@ from buttons import keyA, keyB, keyC, keyD_1, keyD_2, keyF, inl_keyR, keyE, keyG
 from aiogram.contrib.fsm_storage.memory import MemoryStorage  # оперативна пам'ять
 from aiogram.dispatcher.filters.state import StatesGroup, State  # стан
 from aiogram.dispatcher import FSMContext  # запис змінних
-from data_managment import create_table, update_table, check_retarget, update_retarget, emotion_state_check, emotion_proxy
+from data_managment import create_table, update_table, check_retarget, update_retarget, \
+	emotion_state_check, emotion_proxy, emotion_state_road
 from datetime import datetime
 import random
 from dotenv import load_dotenv
@@ -91,20 +92,21 @@ async def bot_polling():
 			# emotion_state - змінна для запису стану. Оскільки в цьому блоку багато обробки повідомлення від юзера
 			# довелося створити окремо змінну замість message.text
 			if message.text[:1].isdigit() is True and int(message.text[:1]) < 11:
-				current_state = message.text[:1]
+				current_state = message.text
 				update_table(step, emotion, message.text, datetime.now().replace(microsecond=0), message.from_user.id)  # оновлюємо бд
 			elif message.text == 'Давай сробуємо  👍':
 				current_state = await emotion_state_check(step, message.from_user.id, message.text)
 				print('update', current_state)
 			else:
-				current_state = '0'  # записуємо в бд 0 якщо інформація не відповідає шаблону
+				current_state = '0❌'  # записуємо в бд 0 якщо інформація не відповідає шаблону
 				update_table(step, emotion, current_state, datetime.now().replace(microsecond=0), message.from_user.id)  # оновлюємо бд
 				print('update', current_state)
 
 			markup = keyD_1 if step == 0 else keyD_2  # клавіатура техніка 1 та техніка 2 в залежності від етапу
 
 			last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)
-			if int(current_state) > last_check:
+			print(current_state, last_check, 'cur>last')
+			if int(current_state[:-1]) > int(last_check[:-1]):
 				await bot.send_message(message.chat.id, 'Нам шкода що вас стан погіршився. 😔', reply_markup=keyG)
 				await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_key_state)
 				await QuestStep.emotion.set()
@@ -163,9 +165,11 @@ async def bot_polling():
 		async with state.proxy() as data:  # запаковываем переменные в дату (словарь)
 			step = data['step']
 
-		await bot.send_message(message.chat.id, 'Вправа завершена!')
+		previus_state = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)
+		await bot.send_message(message.chat.id, f'Вправа завершена!\nВаша попередня оцінка:  <b>{previus_state}</b>', parse_mode='HTML')
 		await asyncio.sleep(1)
-		await bot.send_message(message.chat.id, '<b>Чи покращився зараз ваш стан? 💙</b>', reply_markup=keyC, parse_mode='HTML')
+		await bot.send_message(message.chat.id, '<b>Після проходження даної техніки оцініть '
+												'як змінився  ваш стан від 1 до 10? 💙</b>', reply_markup=keyC, parse_mode='HTML')
 		await QuestStep.pre_step.set() if step < 2 else await QuestStep.final.set()
 
 	@dp.message_handler(state=QuestStep.final)
@@ -175,20 +179,27 @@ async def bot_polling():
 			emotion = data['emotion']
 
 		# отримуємо та обробляємо поточний емоційний стан користувача
-		current_state = message.text if message.text[:1].isdigit() is True and int(message.text[:1]) < 11 else '0'
+		current_state = message.text if message.text[:1].isdigit() is True and int(message.text[:1]) < 11 else '0❌'
 		#  last_check змінна в якій ми зберінаємо емоційний стан користувача на попередньому етапі
 		last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)
 		# оновлюємо бд
 		update_table(step, emotion, current_state, datetime.now().replace(microsecond=0), message.from_user.id)
 
-		if int(current_state[:1]) > last_check:  # текст на випадок коли психологічний стан погіршився
+		if int(current_state[:1]) > int(last_check[:-1]):  # текст на випадок коли психологічний стан погіршився
 			await bot.send_message(message.chat.id, f'Нам шкода що вас стан погіршився. 😔\n\n{CALL_BACK_TEXT[1]}', reply_markup=inl_keyR)
 		else:
 			await bot.send_message(message.chat.id, 'Сподіваюсь ми допомогли вам покращити ваш стан. 🧘‍♀\n\n'
 												'Якщо ви відчуваєте що це було цінним для вас, підтримайте наш проєкт. 💙', reply_markup=inl_keyR)
 		await asyncio.sleep(1)
 
-		await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
+		if emotion == 'я не розумію що відчуваю':
+			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
+		else:
+			state_road = await emotion_state_road(message.from_user.id)
+			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!\n\n'
+												'Ваш прогрес:\n\n'
+												f'{state_road[0][0]}  <b>>>></b>  {state_road[0][1]}  <b>>>></b>  {state_road[0][2]}'
+												f'  <b>завершено!</b>', reply_markup=keyE, parse_mode='HTML')
 		await QuestStep.emotion.set()
 
 	@dp.callback_query_handler(text=['techniks', 'question', 'donate', 'tech2'], state='*')

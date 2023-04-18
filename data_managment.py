@@ -100,7 +100,7 @@ def update_retarget(user_id, time):
 		if conn is not None:
 			conn.close()
 
-async def emotion_state_check(step, user_id, message):
+async def emotion_state_check(step, user_id, message):  # функція котра відповідає за отрмання інформації про попередній стан користувача
 	try:
 		conn = psycopg2.connect(
 			host=host,
@@ -117,9 +117,29 @@ async def emotion_state_check(step, user_id, message):
 			elif step == 2:
 				cursor.execute(f"SELECT step1 FROM feelings WHERE user_id = {user_id}")
 			else:
-				return 10
+				return '10⚫'
 			previus_state = cursor.fetchone()
-		return int((previus_state[0][:-1]))
+			print(previus_state[0])
+		return (previus_state[0])
+	except Exception as er:
+		print(f'Error with postgres >>> {er}')
+	finally:
+		if conn is not None:
+			conn.close()
+
+async def emotion_state_road(user_id):  # функція котра відповідає за отрмання інформації про усі стани користувача
+	try:
+		conn = psycopg2.connect(
+			host=host,
+			database=db_name,
+			user=user,
+			password=password
+		)
+		conn.autocommit = True
+		with conn.cursor() as cursor:
+			cursor.execute(f"SELECT pre_step, step1, step2 FROM feelings WHERE user_id = {user_id}")
+			states_road = cursor.fetchall()
+		return states_road
 	except Exception as er:
 		print(f'Error with postgres >>> {er}')
 	finally:
