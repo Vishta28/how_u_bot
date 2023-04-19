@@ -193,7 +193,7 @@ async def bot_polling():
 			await asyncio.sleep(2)
 
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_keyR2)
-		elif int(current_state[:-1]) == 0 and int(last_check[:-1]) == 0:
+		elif int(current_state[:-1]) == 0 and int(last_check[:-1]) == 0 and emotion != 'я не розумію що відчуваю':
 			await bot.send_message(message.chat.id, 'Мої сенсори не можуть підказати чи змінився ваш стан 💔\n\n'
 													'Ваш результат:\n\n'
 													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
