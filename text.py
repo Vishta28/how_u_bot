@@ -484,7 +484,7 @@ MEDIA = {'страх': [('https://drive.google.com/uc?id=1DHGeIkK38ut_5Bk-cVy7rX
 					('https://drive.google.com/uc?id=1EbzmY0oVUtAfd3ixklmhMWA80ErJmawy'),
 					('https://drive.google.com/uc?id=1D-3CVx736m0Fzn49itmqREgeRhR3GRu1')],  # музика
 		'провина': [('https://drive.google.com/uc?id=1DGbeKPShLo-Emv9HmZWz9Z7KP1s_r-kZ'),
-					('https://drive.google.com/uc?id=1CE913QU4i_hcxpPd-uVBj2-q2r2NkKw-')],
+					('https://drive.google.com/uc?id=1H8b0JKywwHvUNXsFPrwNpSzubztLTw56')],
 		'злість': [('https://drive.google.com/uc?id=1F20qR7fYOdlRHMBffVCeYHKnJrWmwWN0'),
 				('https://drive.google.com/uc?id=1EzOP4CuJS9h1JblsD6G8ZUDchjO_eTUv')],
 		'сум': [('https://drive.google.com/uc?id=1EwpYPOWpLAMawsbxZF1D3dDqxQYzSWa-'),

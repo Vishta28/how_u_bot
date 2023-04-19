@@ -179,7 +179,7 @@ async def bot_polling():
 			emotion = data['emotion']
 
 		# отримуємо та обробляємо поточний емоційний стан користувача
-		current_state = message.text if message.text[:1].isdigit() is True and int(message.text[:1]) < 11 else '0❌'
+		current_state = message.text if message.text[:-1].isdigit() is True and int(message.text[:-1]) < 11 else '0❌'
 		#  last_check змінна в якій ми зберінаємо емоційний стан користувача на попередньому етапі
 		last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)
 		# оновлюємо бд
@@ -187,7 +187,7 @@ async def bot_polling():
 
 		state_road = await emotion_state_road(message.from_user.id)  # отримуємо весь прогрес користувача із бд
 
-		if int(current_state[:1]) > int(last_check[:-1]):  # текст на випадок коли психологічний стан погіршився
+		if int(current_state[:-1]) > int(last_check[:-1]):  # текст на випадок коли психологічний стан погіршився
 			await bot.send_message(message.chat.id, 'Нажаль мої сенсори підказують, що вам стало гірше 🖤\n\n'
 													'Ваш результат:\n\n'
 													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
@@ -196,7 +196,7 @@ async def bot_polling():
 
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_keyR2)
 
-		elif int(current_state[:1]) < int(last_check[:-1]):  # текст на випадок коли психологічний стан покращився
+		elif int(current_state[:-1]) < int(last_check[:-1]):  # текст на випадок коли психологічний стан покращився
 			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що вам стало краще 💙\n\n'
 													'Ваш результат:\n\n'
 													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
@@ -205,7 +205,7 @@ async def bot_polling():
 
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
 
-		elif int(current_state[:1]) == int(last_check[:-1]):  # текст на випадок коли психологічний стан не змінився
+		elif int(current_state[:-1]) == int(last_check[:-1]):  # текст на випадок коли психологічний стан не змінився
 			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що стан не змінився 💜\n\n'
 													'Ваш результат:\n\n'
 													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
