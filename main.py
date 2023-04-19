@@ -193,7 +193,12 @@ async def bot_polling():
 			await asyncio.sleep(2)
 
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_keyR2)
-		elif int(current_state[:-1]) == 0 and int(last_check[:-1]) == 0 and emotion != 'я не розумію що відчуваю':
+		elif emotion == 'я не розумію що відчуваю':
+			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
+			await asyncio.sleep(2)
+
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
+		elif int(current_state[:-1]) == 0 and int(last_check[:-1]) == 0:
 			await bot.send_message(message.chat.id, 'Мої сенсори не можуть підказати чи змінився ваш стан 💔\n\n'
 													'Ваш результат:\n\n'
 													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
@@ -221,9 +226,6 @@ async def bot_polling():
 
 		else:
 			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
-			await asyncio.sleep(1)
-
-			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
 		await QuestStep.emotion.set()
 
 	@dp.callback_query_handler(text=['techniks', 'question', 'donate', 'tech2'], state='*')
