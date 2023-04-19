@@ -91,16 +91,14 @@ async def bot_polling():
 
 			# emotion_state - змінна для запису стану. Оскільки в цьому блоку багато обробки повідомлення від юзера
 			# довелося створити окремо змінну замість message.text
-			if message.text[:1].isdigit() is True and int(message.text[:1]) < 11:
+			if message.text[:-1].rstrip().isdigit() is True and int(message.text[:-1].rstrip()) < 11:
 				current_state = message.text
 				update_table(step, emotion, message.text, datetime.now().replace(microsecond=0), message.from_user.id)  # оновлюємо бд
 			elif message.text == 'Давай сробуємо  👍':
 				current_state = await emotion_state_check(step, message.from_user.id, message.text)
-				print('update', current_state)
 			else:
 				current_state = '0❌'  # записуємо в бд 0 якщо інформація не відповідає шаблону
 				update_table(step, emotion, current_state, datetime.now().replace(microsecond=0), message.from_user.id)  # оновлюємо бд
-				print('update', current_state)
 
 			markup = keyD_1 if step == 0 else keyD_2  # клавіатура техніка 1 та техніка 2 в залежності від етапу
 
@@ -178,19 +176,19 @@ async def bot_polling():
 			step = data['step']
 			emotion = data['emotion']
 
-		# отримуємо та обробляємо поточний емоційний стан користувача
-		current_state = message.text if message.text[:-1].isdigit() is True and int(message.text[:-1]) < 11 else '0❌'
+		# отримуємо та обробляємо поточний емоційний стан користувача. Робимо зріз та прибираємо пробіли.
+		current_state = message.text if message.text[:-1].rstrip().isdigit() is True and int(message.text[:-1].rstrip()) < 11 else '0❌'
 		#  last_check змінна в якій ми зберінаємо емоційний стан користувача на попередньому етапі
 		last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)
 		# оновлюємо бд
 		update_table(step, emotion, current_state, datetime.now().replace(microsecond=0), message.from_user.id)
-
-		state_road = await emotion_state_road(message.from_user.id)  # отримуємо весь прогрес користувача із бд
+		# отримуємо весь прогрес користувача із бд
+		state_road = await emotion_state_road(message.from_user.id)
 
 		if int(current_state[:-1]) > int(last_check[:-1]):  # текст на випадок коли психологічний стан погіршився
 			await bot.send_message(message.chat.id, 'Нажаль мої сенсори підказують, що вам стало гірше 🖤\n\n'
 													'Ваш результат:\n\n'
-													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
+													f'{state_road[0][0]} <b>--></b>  {state_road[0][1]} <b>--></b> {state_road[0][2]}'
 													f'  <b>негативний.😔</b>', reply_markup=keyE, parse_mode='HTML')
 			await asyncio.sleep(2)
 
@@ -199,7 +197,7 @@ async def bot_polling():
 		elif int(current_state[:-1]) < int(last_check[:-1]):  # текст на випадок коли психологічний стан покращився
 			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що вам стало краще 💙\n\n'
 													'Ваш результат:\n\n'
-													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
+													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
 													f'  <b>позитивний!😃</b>', reply_markup=keyE, parse_mode='HTML')
 			await asyncio.sleep(2)
 
@@ -208,7 +206,7 @@ async def bot_polling():
 		elif int(current_state[:-1]) == int(last_check[:-1]):  # текст на випадок коли психологічний стан не змінився
 			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що стан не змінився 💜\n\n'
 													'Ваш результат:\n\n'
-													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
+													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
 													f'  <b>нейтральний😶</b>', reply_markup=keyE, parse_mode='HTML')
 			await asyncio.sleep(2)
 
