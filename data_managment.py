@@ -5,12 +5,6 @@ host = 'ec2-54-73-22-169.eu-west-1.compute.amazonaws.com'
 user = 'zdeqyzbrfvrtzb'
 password = '448e2ff0b46544051870a5da585d0e6a55f89621f72a4161ffc5b86832c734db'
 db_name = 'd4h52vtumoepq0'
-
-# host = "localhost"
-# user = "postgres"
-# password = "1995370vishta"
-# db_name = "postgres"
-
 def create_table(user_id, name, time):
 	try:
 		conn = psycopg2.connect(
@@ -194,19 +188,16 @@ def check_retarget():
 			for data in retarget_status:
 				now = datetime.now().replace(microsecond=0)
 				bd = datetime.strptime(str(data[1]), '%Y-%m-%d %H:%M:%S')
-				print(bd)
 
-				if data[0] != 'done' and now > bd + timedelta(hours=3):
+				if data[0] != 'done' and now > bd + timedelta(hours=5):
 					cursor.execute(f"SELECT user_id, emotion, retarget FROM feelings WHERE time = '{data[1]}'")
 					small_retargert = cursor.fetchone()
 					message_ready_time.append(small_retargert)
-					print('small_retarget', small_retargert)
 
-				elif now > bd + timedelta(hours=6):
+				elif now > bd + timedelta(hours=10):
 					cursor.execute(f"SELECT user_id, emotion, retarget FROM feelings WHERE time = '{data[1]}'")
 					long_retargert = cursor.fetchone()
 					message_ready_time.append(long_retargert)
-					print('long_retarget', long_retargert)
 		return message_ready_time
 	except Exception as er:
 		print(f'Error with postgres >>> {er}')

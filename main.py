@@ -3,7 +3,7 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import InputFile
 from text import ALL_QUESTS, BOT_TEXT, PRE_QUESTS, RETARGET_QUESTIONS, MEDIA, CALL_BACK_TEXT
-from buttons import keyA, keyB, keyC, keyD_1, keyD_2, keyF, inl_keyR, keyE, keyG, none, inl_key_state
+from buttons import keyA, keyB, keyC, keyD_1, keyD_2, keyF, inl_keyR, inl_keyR2, keyE, keyG, none, inl_key_state
 from aiogram.contrib.fsm_storage.memory import MemoryStorage  # оперативна пам'ять
 from aiogram.dispatcher.filters.state import StatesGroup, State  # стан
 from aiogram.dispatcher import FSMContext  # запис змінних
@@ -104,8 +104,8 @@ async def bot_polling():
 
 			markup = keyD_1 if step == 0 else keyD_2  # клавіатура техніка 1 та техніка 2 в залежності від етапу
 
-			last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)
-			print(current_state, last_check, 'cur>last')
+			last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)  # стан на попередньому етапі
+
 			if int(current_state[:-1]) > int(last_check[:-1]):
 				await bot.send_message(message.chat.id, 'Нам шкода що вас стан погіршився. 😔', reply_markup=keyG)
 				await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_key_state)
@@ -185,21 +185,39 @@ async def bot_polling():
 		# оновлюємо бд
 		update_table(step, emotion, current_state, datetime.now().replace(microsecond=0), message.from_user.id)
 
-		if int(current_state[:1]) > int(last_check[:-1]):  # текст на випадок коли психологічний стан погіршився
-			await bot.send_message(message.chat.id, f'Нам шкода що вас стан погіршився. 😔\n\n{CALL_BACK_TEXT[1]}', reply_markup=inl_keyR)
-		else:
-			await bot.send_message(message.chat.id, 'Сподіваюсь ми допомогли вам покращити ваш стан. 🧘‍♀\n\n'
-												'Якщо ви відчуваєте що це було цінним для вас, підтримайте наш проєкт. 💙', reply_markup=inl_keyR)
-		await asyncio.sleep(1)
+		state_road = await emotion_state_road(message.from_user.id)  # отримуємо весь прогрес користувача із бд
 
-		if emotion == 'я не розумію що відчуваю':
-			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
+		if int(current_state[:1]) > int(last_check[:-1]):  # текст на випадок коли психологічний стан погіршився
+			await bot.send_message(message.chat.id, 'Нажаль мої сенсори підказують, що вам стало гірше 🖤\n\n'
+													'Ваш результат:\n\n'
+													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
+													f'  <b>негативний.😔</b>', reply_markup=keyE, parse_mode='HTML')
+			await asyncio.sleep(2)
+
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_keyR2)
+
+		elif int(current_state[:1]) < int(last_check[:-1]):  # текст на випадок коли психологічний стан покращився
+			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що вам стало краще 💙\n\n'
+													'Ваш результат:\n\n'
+													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
+													f'  <b>позитивний!😃</b>', reply_markup=keyE, parse_mode='HTML')
+			await asyncio.sleep(2)
+
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
+
+		elif int(current_state[:1]) == int(last_check[:-1]):  # текст на випадок коли психологічний стан не змінився
+			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що стан не змінився 💜\n\n'
+													'Ваш результат:\n\n'
+													f'{state_road[0][0]}  <b>--></b>  {state_road[0][1]}  <b>--></b>  {state_road[0][2]}'
+													f'  <b>нейтральний😶</b>', reply_markup=keyE, parse_mode='HTML')
+			await asyncio.sleep(2)
+
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[3], reply_markup=inl_keyR2)
 		else:
-			state_road = await emotion_state_road(message.from_user.id)
-			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!\n\n'
-												'Ваш прогрес:\n\n'
-												f'{state_road[0][0]}  <b>>>></b>  {state_road[0][1]}  <b>>>></b>  {state_road[0][2]}'
-												f'  <b>завершено!</b>', reply_markup=keyE, parse_mode='HTML')
+			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
+			await asyncio.sleep(1)
+
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
 		await QuestStep.emotion.set()
 
 	@dp.callback_query_handler(text=['techniks', 'question', 'donate', 'tech2'], state='*')
@@ -227,8 +245,8 @@ async def bot_polling():
 async def timer():  # функція котра відповідає за ретаргет та відлік часу
 	while True:
 		user_data = check_retarget()
+		await asyncio.sleep(21000)
 		print(user_data, '>>> user_data')
-		await asyncio.sleep(21600)
 
 		if len(user_data) > 0:
 			for data in user_data:
@@ -243,15 +261,18 @@ async def timer():  # функція котра відповідає за рет
 										'Пропонуємо вам завершити вправу, '
 										f'або задати своє питання у нашому</i> <a href="{INST_URL}">Instagram </a>'
 										, parse_mode=types.ParseMode.HTML)
-					except:
+					except Exception as er:
+						print(er)
 						pass
 				else:
 					try:
 						await bot.send_message(retarget_to_user, ret_question, reply_markup=inl_keyR)
-					except:
+					except Exception as er:
+						print(er)
 						pass
 				update_retarget(data[0], time=datetime.now().replace(microsecond=0))
 				user_data.clear()
+				print('retarget done')
 		else:
 			pass
 

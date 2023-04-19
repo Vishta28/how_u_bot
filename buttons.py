@@ -51,18 +51,18 @@ keyD_2.add(button_2)
 none = ReplyKeyboardRemove()
 
 inl_keyR = InlineKeyboardMarkup(row_width=1)
-inl_button1 = InlineKeyboardButton(text='Повернутися до технік 🔬',
+inl_keyR2 = InlineKeyboardMarkup(row_width=1)
+inl_key_state = InlineKeyboardMarkup(row_width=1)
+
+inl_button1 = InlineKeyboardButton(text='Спробувати інші техніки 🔬',
 									callback_data='techniks')
-inl_button2 = InlineKeyboardButton(text='Поставити питання 🗣️',
+inl_button2 = InlineKeyboardButton(text='Поставити питання спеціалісту 🗣️',
 									callback_data='question')
 inl_button3 = InlineKeyboardButton(text='Підтримати проєкт 💸',
 									callback_data='donate')
+inl_button5 = InlineKeyboardButton(text='Продовжити виконання техніки ⏩',
+									callback_data='tech2')
 
 inl_keyR.add(inl_button1, inl_button2, inl_button3)
-
-inl_key_state = InlineKeyboardMarkup(row_width=1)
-inl_button4 = InlineKeyboardButton(text='Задати питання 🗣️',
-									callback_data='question')
-inl_button5 = InlineKeyboardButton(text='Техніка 2️⃣',
-									callback_data='tech2')
-inl_key_state.add(inl_button4, inl_button5)
+inl_keyR2.add(inl_button1, inl_button2)
+inl_key_state.add(inl_button2, inl_button5)
