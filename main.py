@@ -207,10 +207,18 @@ async def bot_polling():
 			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що стан не змінився 💜\n\n'
 													'Ваш результат:\n\n'
 													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
-													f'  <b>нейтральний😶</b>', reply_markup=keyE, parse_mode='HTML')
+													f'  <b>нейтральний😐</b>', reply_markup=keyE, parse_mode='HTML')
 			await asyncio.sleep(2)
 
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[3], reply_markup=inl_keyR2)
+		elif int(current_state[:-1]) == 0 and int(last_check[:-1]) == 0:
+			await bot.send_message(message.chat.id, 'Мої сенсори не можуть підказати чи змінився ваш стан 💔\n\n'
+													'Ваш результат:\n\n'
+													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
+													f'  <b>нейтральний😶</b>', reply_markup=keyE, parse_mode='HTML')
+			await asyncio.sleep(2)
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[4], reply_markup=inl_keyR2)
+
 		else:
 			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
 			await asyncio.sleep(1)
