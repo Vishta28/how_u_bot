@@ -193,6 +193,13 @@ async def bot_polling():
 			await asyncio.sleep(2)
 
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_keyR2)
+		elif int(current_state[:-1]) == 0 and int(last_check[:-1]) == 0:
+			await bot.send_message(message.chat.id, 'Мої сенсори не можуть підказати чи змінився ваш стан 💔\n\n'
+													'Ваш результат:\n\n'
+													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
+													f'  <b>невідомий🫥</b>', reply_markup=keyE, parse_mode='HTML')
+			await asyncio.sleep(2)
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[4], reply_markup=inl_keyR2)
 
 		elif int(current_state[:-1]) < int(last_check[:-1]):  # текст на випадок коли психологічний стан покращився
 			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що вам стало краще 💙\n\n'
@@ -211,13 +218,6 @@ async def bot_polling():
 			await asyncio.sleep(2)
 
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[3], reply_markup=inl_keyR2)
-		elif int(current_state[:-1]) == 0 and int(last_check[:-1]) == 0:
-			await bot.send_message(message.chat.id, 'Мої сенсори не можуть підказати чи змінився ваш стан 💔\n\n'
-													'Ваш результат:\n\n'
-													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
-													f'  <b>нейтральний😶</b>', reply_markup=keyE, parse_mode='HTML')
-			await asyncio.sleep(2)
-			await bot.send_message(message.chat.id, CALL_BACK_TEXT[4], reply_markup=inl_keyR2)
 
 		else:
 			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
@@ -234,10 +234,12 @@ async def bot_polling():
 		elif call.data == 'question':
 			await call.message.answer('Ви можете перейти за посиланням на наш Instagram, '
 									'та задати ваше питання у дірект')
+			await asyncio.sleep(1)
 			await call.message.answer(f'Задати питання, клікай ➡ <a href="{INST_URL}">наш Instagram</a>', parse_mode='HTML')
 		elif call.data == 'donate':
 			photo = 'https://drive.google.com/uc?id=1DTAk3e2FP0UWGWBxF3i4gdUnb89PVX0A'
 			await bot.send_photo(call.from_user.id, photo)
+			await asyncio.sleep(2)
 			await call.message.answer(CALL_BACK_TEXT[0], parse_mode='HTML')
 			# await call.answer('Велике повідомлення', show_alert=True)  # крута кнопка алерт
 		elif call.data == 'tech2':
