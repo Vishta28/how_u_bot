@@ -476,7 +476,7 @@ RETARGET_QUESTIONS = {'страх': [('Частіше за все вас ляк�
 								('За чим саме в вашому житті ви сумуєте найбільше? (люди, події, моменти)')]
 }
 # в усіх фото треба було змінити лінк (uc?id='id-photo')
-MEDIA = {'страх': [('https://drive.google.com/uc?id=1J-wKKZO5wY0khS9bbRfcisFVqFt0ULsp'),
+MEDIA = {'страх': [('https://drive.google.com/uc?id=1lrQUwrIcR09HB8jgEU1LNy8RArQ5Z9KG'),
 					('https://drive.google.com/uc?id=1YTWZqZE4qpwaHIx0MxEm90l62v1QY0Np')],
 		'я не розумію що відчуваю': [('https://drive.google.com/uc?id=1EMwAoF298wSY7eqwYRaISrsJziGCjcjj'),
 					('https://drive.google.com/uc?id=1ETDzEcCAau4mFXIZ52-MYaCcFWB6kEeJ'),
