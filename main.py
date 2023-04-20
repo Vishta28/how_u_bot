@@ -242,7 +242,6 @@ async def bot_polling():
 		elif call.data == 'donate':
 			photo = 'https://drive.google.com/uc?id=1DTAk3e2FP0UWGWBxF3i4gdUnb89PVX0A'
 			await bot.send_photo(call.from_user.id, photo)
-			await bot.send_chat_action(call.from_user.id)
 			await asyncio.sleep(2)
 			await call.message.answer(CALL_BACK_TEXT[0], parse_mode='HTML')
 			# await call.answer('Велике повідомлення', show_alert=True)  # крута кнопка алерт
