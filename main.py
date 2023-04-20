@@ -186,20 +186,7 @@ async def bot_polling():
 		# отримуємо весь прогрес користувача із бд
 		state_road = await emotion_state_road(message.from_user.id)
 
-		if int(current_state[:-1]) > int(last_check[:-1]):  # текст на випадок коли психологічний стан погіршився
-			await bot.send_message(message.chat.id, 'Нажаль мої сенсори підказують, що вам стало гірше 🖤\n\n'
-													'Ваш результат:\n\n'
-													f'{state_road[0][0]} <b>--></b>  {state_road[0][1]} <b>--></b> {state_road[0][2]}'
-													f'  <b>негативний.😔</b>', reply_markup=keyE, parse_mode='HTML')
-			await asyncio.sleep(2)
-
-			await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_keyR2)
-		elif emotion == 'я не розумію що відчуваю':  # ця емоція не має шкали оцінки стану
-			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
-			await asyncio.sleep(2)
-
-			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
-		elif int(current_state[:-1]) == 0 or int(last_check[:-1]) == 0:
+		if int(current_state[:-1]) == 0 or int(last_check[:-1]) == 0:
 			await bot.send_message(message.chat.id, 'Мої сенсори не можуть підказати чи змінився ваш стан 💔\n\n'
 													'Ваш результат:\n\n'
 													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
@@ -207,13 +194,25 @@ async def bot_polling():
 			await asyncio.sleep(2)
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[4], reply_markup=inl_keyR2)
 
+		elif int(current_state[:-1]) > int(last_check[:-1]):  # текст на випадок коли психологічний стан погіршився
+			await bot.send_message(message.chat.id, 'Нажаль мої сенсори підказують, що вам стало гірше 🖤\n\n'
+													'Ваш результат:\n\n'
+													f'{state_road[0][0]} <b>--></b>  {state_road[0][1]} <b>--></b> {state_road[0][2]}'
+													f'  <b>негативний.😔</b>', reply_markup=keyE, parse_mode='HTML')
+			await asyncio.sleep(2)
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_keyR2)
+
+		elif emotion == 'я не розумію що відчуваю':  # ця емоція не має шкали оцінки стану
+			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
+			await asyncio.sleep(2)
+			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
+
 		elif int(current_state[:-1]) < int(last_check[:-1]):  # текст на випадок коли психологічний стан покращився
 			await bot.send_message(message.chat.id, 'Мої сенсори підказують, що вам стало краще 💙\n\n'
 													'Ваш результат:\n\n'
 													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
 													f'  <b>позитивний!😃</b>', reply_markup=keyE, parse_mode='HTML')
 			await asyncio.sleep(2)
-
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
 
 		elif int(current_state[:-1]) == int(last_check[:-1]):  # текст на випадок коли психологічний стан не змінився
@@ -222,7 +221,6 @@ async def bot_polling():
 													f'{state_road[0][0]} <b>--></b> {state_road[0][1]} <b>--></b> {state_road[0][2]}'
 													f'  <b>нейтральний😐</b>', reply_markup=keyE, parse_mode='HTML')
 			await asyncio.sleep(2)
-
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[3], reply_markup=inl_keyR2)
 
 		else:
