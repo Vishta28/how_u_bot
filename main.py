@@ -62,8 +62,9 @@ async def bot_polling():
 			await QuestStep.emotion.set()
 		else:
 			if emotion == 'я не розумію що відчуваю':
-				await bot.send_photo(message.chat.id, photo=InputFile.from_url(MEDIA[emotion][2]))
-				await asyncio.sleep(2)
+				await bot.send_photo(message.chat.id, photo=InputFile.from_url(MEDIA[emotion][2]), reply_markup=none)
+				await bot.send_chat_action(message.chat.id, action='typing')  # typing
+				await asyncio.sleep(1)  # затримка
 				message_text, markup = 'Спробуємо розібратись?', keyA
 			else:
 				message_text, markup = 'Як би ви оцінили зараз інтенсивність вашого стану по 10-бальній шкалі? 💙', keyC
@@ -104,7 +105,7 @@ async def bot_polling():
 
 			last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)  # стан на попередньому етапі
 
-			if int(current_state[:-1]) > int(last_check[:-1]):
+			if int(last_check[:-1]) != 0 and int(current_state[:-1]) > int(last_check[:-1]):
 				await bot.send_message(message.chat.id, 'Нам шкода що вас стан погіршився. 😔', reply_markup=keyG)
 				await asyncio.sleep(1)
 				await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_key_state)
@@ -188,7 +189,7 @@ async def bot_polling():
 
 		if emotion == 'я не розумію що відчуваю':  # ця емоція не має шкали оцінки стану
 			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
-			await asyncio.sleep(2)
+			await asyncio.sleep(1)
 			await bot.send_message(message.chat.id, CALL_BACK_TEXT[2], reply_markup=inl_keyR)
 
 		elif int(current_state[:-1]) == 0 or int(last_check[:-1]) == 0:

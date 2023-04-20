@@ -1,10 +1,14 @@
 import psycopg2
 from datetime import datetime, timedelta
 
-host = 'ec2-54-73-22-169.eu-west-1.compute.amazonaws.com'
-user = 'zdeqyzbrfvrtzb'
-password = '448e2ff0b46544051870a5da585d0e6a55f89621f72a4161ffc5b86832c734db'
-db_name = 'd4h52vtumoepq0'
+# host = 'ec2-54-73-22-169.eu-west-1.compute.amazonaws.com'
+# user = 'zdeqyzbrfvrtzb'
+# password = '448e2ff0b46544051870a5da585d0e6a55f89621f72a4161ffc5b86832c734db'
+# db_name = 'd4h52vtumoepq0'
+host = "localhost"
+user = "postgres"
+password = "1995370vishta"
+db_name = "postgres"
 def create_table(user_id, name, time):
 	try:
 		conn = psycopg2.connect(
@@ -113,7 +117,6 @@ async def emotion_state_check(step, user_id, message):  # функція кот�
 			else:
 				return '10⚫'
 			previus_state = cursor.fetchone()
-			print(previus_state[0])
 		return (previus_state[0])
 	except Exception as er:
 		print(f'Error with postgres >>> {er}')
