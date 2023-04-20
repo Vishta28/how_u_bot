@@ -68,7 +68,7 @@ async def bot_polling():
 			else:
 				message_text, markup = 'Як би ви оцінили зараз інтенсивність вашого стану по 10-бальній шкалі? 💙', keyC
 
-			async with state.proxy() as data:  # апаковуємо наші змінні у state.proxy() (словник)
+			async with state.proxy() as data:  # запаковуємо наші змінні у state.proxy() (словник)
 				data['step'] = 0
 				data['emotion'] = emotion
 
