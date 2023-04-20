@@ -183,7 +183,6 @@ def check_retarget():
 			cursor.execute('SELECT retarget, time FROM feelings')
 			retarget_status = cursor.fetchall()
 			message_ready_time = []
-			print('retarget_status>>>', retarget_status)
 
 			for data in retarget_status:
 				now = datetime.now().replace(microsecond=0)
@@ -198,6 +197,7 @@ def check_retarget():
 					cursor.execute(f"SELECT user_id, emotion, retarget FROM feelings WHERE time = '{data[1]}'")
 					long_retargert = cursor.fetchone()
 					message_ready_time.append(long_retargert)
+		print('message_ready>>>', message_ready_time)
 		return message_ready_time
 	except Exception as er:
 		print(f'Error with postgres >>> {er}')

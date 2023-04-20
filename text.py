@@ -475,15 +475,16 @@ RETARGET_QUESTIONS = {'страх': [('Частіше за все вас ляк�
 								('Що у житті вас засмучує більше за все?'),
 								('За чим саме в вашому житті ви сумуєте найбільше? (люди, події, моменти)')]
 }
-MEDIA = {'страх': [('https://drive.google.com/uc?id=1DHGeIkK38ut_5Bk-cVy7rX19Yb0T09zL'),
-					('https://drive.google.com/uc?id=1DFq2x2qVY3JYYju7C4nQyhcQC-d_HN7a')],
+# в усіх фото треба було змінити лінк (uc?id='id-photo')
+MEDIA = {'страх': [('https://drive.google.com/uc?id=1J-wKKZO5wY0khS9bbRfcisFVqFt0ULsp'),
+					('https://drive.google.com/uc?id=1YTWZqZE4qpwaHIx0MxEm90l62v1QY0Np')],
 		'я не розумію що відчуваю': [('https://drive.google.com/uc?id=1EMwAoF298wSY7eqwYRaISrsJziGCjcjj'),
 					('https://drive.google.com/uc?id=1ETDzEcCAau4mFXIZ52-MYaCcFWB6kEeJ'),
 					('https://drive.google.com/uc?id=1GDMD1G8an4Vwe8nkAhzoHDY-h3zpX-eW')],  # єдине фото в передописі
 		'тривога': [('https://drive.google.com/uc?id=1Fb-KOTu0NAzcM1JgaUc1s_90QalVk6tx'),
 					('https://drive.google.com/uc?id=1EbzmY0oVUtAfd3ixklmhMWA80ErJmawy'),
 					('https://drive.google.com/uc?id=1D-3CVx736m0Fzn49itmqREgeRhR3GRu1')],  # музика
-		'провина': [('https://drive.google.com/uc?id=1DGbeKPShLo-Emv9HmZWz9Z7KP1s_r-kZ'),
+		'провина': [('https://drive.google.com/uc?id=1SuaCGCt21IgtbRR-GSJOOkS2bSZl8RYH'),
 					('https://drive.google.com/uc?id=1H8b0JKywwHvUNXsFPrwNpSzubztLTw56')],
 		'злість': [('https://drive.google.com/uc?id=1F20qR7fYOdlRHMBffVCeYHKnJrWmwWN0'),
 				('https://drive.google.com/uc?id=1EzOP4CuJS9h1JblsD6G8ZUDchjO_eTUv')],
