@@ -60,9 +60,20 @@ inl_button2 = InlineKeyboardButton(text='Поставити питання сп�
 									callback_data='question')
 inl_button3 = InlineKeyboardButton(text='Підтримати проєкт 💸',
 									callback_data='donate')
+inl_button4 = InlineKeyboardButton(text='Додаткова допомога 👥',
+									callback_data='donate2')
 inl_button5 = InlineKeyboardButton(text='Продовжити виконання техніки ⏩',
 									callback_data='tech2')
 
 inl_keyR.add(inl_button1, inl_button2, inl_button3)
-inl_keyR2.add(inl_button1, inl_button2)
+inl_keyR2.add(inl_button1, inl_button2, inl_button4)
 inl_key_state.add(inl_button2, inl_button5)
+
+async def message_correct(message):
+	correct_message = None
+	circles = [(1, '🟢'), (2, '🟢'), (3, '🟢'), (4, '🟠'), (5, '🟠'),
+			(6, '🟠'), (7, '🔴'), (8, '🔴'), (9, '🔴'), (10, '⚫')]
+	for elements in circles:
+		if int(message) in elements:
+			correct_message = message + elements[1]
+	return correct_message

@@ -3,7 +3,7 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import InputFile
 from text import ALL_QUESTS, BOT_TEXT, PRE_QUESTS, RETARGET_QUESTIONS, MEDIA, CALL_BACK_TEXT
-from buttons import keyA, keyB, keyC, keyD_1, keyD_2, keyF, inl_keyR, inl_keyR2, keyE, keyG, none, inl_key_state
+from buttons import keyA, keyB, keyC, keyD_1, keyD_2, keyF, inl_keyR, inl_keyR2, keyE, keyG, none, inl_key_state, message_correct
 from aiogram.contrib.fsm_storage.memory import MemoryStorage  # оперативна пам'ять
 from aiogram.dispatcher.filters.state import StatesGroup, State  # стан
 from aiogram.dispatcher import FSMContext  # запис змінних
@@ -58,13 +58,14 @@ async def bot_polling():
 	async def emotion_description(message: types.Message, state: FSMContext):
 		emotion = message.text[:-2].lower()   # фіксуємо обрану емоцію
 		if emotion not in ALL_QUESTS.keys():  # перевіряємо чи така емоція доступна в списку
-			await bot.send_message(message.chat.id, 'Такої емоції немає в переліку доступних ❌', reply_markup=keyG)
+			await bot.send_message(message.chat.id, 'Помилка! На жаль я вмію працювати тільки з тими емоціями, '
+													'яким мене навчив автор 🤖', reply_markup=keyG)
 			await QuestStep.emotion.set()
 		else:
 			if emotion == 'я не розумію що відчуваю':
 				await bot.send_photo(message.chat.id, photo=InputFile.from_url(MEDIA[emotion][2]), reply_markup=none)
 				await bot.send_chat_action(message.chat.id, action='typing')  # typing
-				await asyncio.sleep(1)  # затримка
+				await asyncio.sleep(2)  # затримка
 				message_text, markup = 'Спробуємо розібратись?', keyA
 			else:
 				message_text, markup = 'Як би ви оцінили зараз інтенсивність вашого стану по 10-бальній шкалі? 💙', keyC
@@ -90,9 +91,13 @@ async def bot_polling():
 				step = 2
 				emotion = await emotion_proxy(message.from_user.id)
 
+			# блок на випадок якщо користувач вводить дані не з клавіатури, але це коректне число
+			if message.text.isdigit() is True and 0 < int(message.text) < 11:
+				message.text = await message_correct(message.text)		# виправляємо повідомлення у правильний формат
+
 			# emotion_state - змінна для запису стану. Оскільки в цьому блоку багато обробки повідомлення від юзера
 			# довелося створити окремо змінну замість message.text
-			if message.text[:-1].rstrip().isdigit() is True and int(message.text[:-1].rstrip()) < 11:
+			if message.text[:-1].rstrip().isdigit() is True and 0 < int(message.text[:-1].rstrip()) < 11:
 				current_state = message.text
 				update_table(step, emotion, message.text, datetime.now().replace(microsecond=0), message.from_user.id)  # оновлюємо бд
 			elif message.text == 'Давай сробуємо  👍':
@@ -153,7 +158,7 @@ async def bot_polling():
 			try:
 				await bot.send_audio(message.chat.id, 'CQACAgIAAxkBAANCZDQqVqaPjMN8TlWfrAkDdytUG1IAAg4rAAL665FJr69UsDX_rRwvBA')
 			except:
-				await bot.send_message(message.chat.id, 'Нажаль не вдалося завантажити аудіофайл 😔 \nАле скоро ми це виправимо!')
+				await bot.send_message(message.chat.id, 'На жаль не вдалося завантажити аудіофайл 😔 \nАле скоро ми це виправимо!')
 
 		if emotions == 'я не розумію що відчуваю':  # змінюємо логіку при відсутності емоції оскільки фідбек не потрібен
 			await QuestStep.final.set() if step == 2 else await QuestStep.feedback.set()
@@ -178,8 +183,12 @@ async def bot_polling():
 			step = data['step']
 			emotion = data['emotion']
 
+		# блок на випадок якщо користувач вводить дані не з клавіатури, але це коректне число
+		if message.text.isdigit() is True and 0 < int(message.text) < 11:
+			message.text = await message_correct(message.text)  # виправляємо повідомлення у правильний формат
+
 		# отримуємо та обробляємо поточний емоційний стан користувача. Робимо зріз та прибираємо пробіли.
-		current_state = message.text if message.text[:-1].rstrip().isdigit() is True and int(message.text[:-1].rstrip()) < 11 else '0❌'
+		current_state = message.text if message.text[:-1].rstrip().isdigit() is True and 0 < int(message.text[:-1].rstrip()) < 11 else '0❌'
 		#  last_check змінна в якій ми зберінаємо емоційний стан користувача на попередньому етапі
 		last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)
 		# оновлюємо бд
@@ -228,7 +237,7 @@ async def bot_polling():
 			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
 		await QuestStep.emotion.set()
 
-	@dp.callback_query_handler(text=['techniks', 'question', 'donate', 'tech2'], state='*')
+	@dp.callback_query_handler(text=['techniks', 'question', 'donate', 'tech2', 'donate2'], state='*')
 	async def callback_retarget(call: types.CallbackQuery):
 		if call.data == 'techniks':
 			await call.message.answer('Підкажи, що ти зараз відчуваеш? 💙', reply_markup=keyB)
@@ -243,12 +252,16 @@ async def bot_polling():
 			await bot.send_photo(call.from_user.id, photo)
 			await asyncio.sleep(2)
 			await call.message.answer(CALL_BACK_TEXT[0], parse_mode='HTML')
-			# await call.answer('Велике повідомлення', show_alert=True)  # крута кнопка алерт
 		elif call.data == 'tech2':
 			await call.answer('💙')
 			await call.message.answer('Ми пишаємося вашою наполегливістю у вирішенні власних питань '
 									'і віримо що у вас все вийде!', reply_markup=keyA)
 			await QuestStep.pre_step.set()
+		elif call.data == 'donate2':
+			photo = 'https://drive.google.com/uc?id=1HGee7QeBu70R1bOmcq3K1vYVXy3RmGCY'
+			await bot.send_photo(call.from_user.id, photo)
+			await asyncio.sleep(2)
+			await call.message.answer(CALL_BACK_TEXT[5], parse_mode='HTML')
 
 	await dp.start_polling()
 
