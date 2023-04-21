@@ -46,7 +46,10 @@ async def bot_polling():
 	@dp.message_handler(commands=['info'], state='*')  # обробляємо основні команди бота
 	async def process_start_command(message: types.Message):
 		await bot.send_message(message.chat.id, "Додаткова інформація:")
+		await bot.send_chat_action(message.chat.id, action='typing')  # бот імітує написання повідомлення
+		await asyncio.sleep(1)
 		await bot.send_message(message.chat.id, BOT_TEXT['bot_description'][1])
+		await asyncio.sleep(2)
 		await bot.send_message(message.chat.id, 'Наш Instagram де ви можете поставити запитання ➡ '
 												f'<a href="{INST_URL}">наш Instagram</a>', types.ParseMode.HTML)
 	@dp.message_handler(commands=['donate'], state='*')  # обробляємо основні команди бота
