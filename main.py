@@ -54,7 +54,7 @@ async def bot_polling():
 		photo = 'https://drive.google.com/uc?id=1DTAk3e2FP0UWGWBxF3i4gdUnb89PVX0A'
 		await bot.send_photo(message.from_user.id, photo)
 		await asyncio.sleep(2)
-		await bot.send_message(CALL_BACK_TEXT[0], parse_mode='HTML')
+		await bot.send_message(message.chat.id, CALL_BACK_TEXT[0], parse_mode='HTML')
 	@dp.message_handler(state=QuestStep.emotion)
 	async def choose_emotion(message: types.Message):
 		await bot.send_message(message.chat.id, "Підкажи, що ти зараз відчуваеш? 💙", reply_markup=keyB)
