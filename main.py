@@ -106,7 +106,7 @@ async def bot_polling():
 
 			# emotion_state - змінна для запису стану. Оскільки в цьому блоку багато обробки повідомлення від юзера
 			# довелося створити окремо змінну замість message.text
-			if message.text[:-1].rstrip().isdigit() is True and 0 < int(message.text[:-1].rstrip()) < 11:
+			if message.text[:-1].rstrip().isdigit() is True and int(message.text[:-1].rstrip()) < 11:
 				current_state = message.text
 				update_table(step, emotion, message.text, datetime.now().replace(microsecond=0), message.from_user.id)  # оновлюємо бд
 			elif message.text == 'Давай сробуємо  👍':
