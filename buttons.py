@@ -75,12 +75,10 @@ inl_key_state.add(inl_button2, inl_button5)
 inl_keyRetarget.add(inl_button7, inl_button6)
 
 async def message_correct(message):
-	correct_message = None
-	circles = [(1, '🟢'), (2, '🟢'), (3, '🟢'), (4, '🟠'), (5, '🟠'),
-			(6, '🟠'), (7, '🔴'), (8, '🔴'), (9, '🔴'), (10, '⚫')]
+	circles = [('1', '🟢'), ('2', '🟢'), ('3', '🟢'), ('4', '🟠'), ('5', '🟠'),
+			('6', '🟠'), ('7', '🔴'), ('8', '🔴'), ('9', '🔴'), ('10', '⚫')]
 	for elements in circles:
-		if int(message) in elements:
-			correct_message = message + elements[1]
-		else:
-			correct_message = message + '❌'
-	return correct_message
+		if str(message) in elements[0]:
+			return str(message) + elements[1]
+
+	return str(message) + '❌'
