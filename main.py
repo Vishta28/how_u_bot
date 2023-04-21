@@ -101,7 +101,7 @@ async def bot_polling():
 				emotion = await emotion_proxy(message.from_user.id)
 
 			# блок на випадок якщо користувач вводить дані не з клавіатури, але це коректне число
-			if message.text.isdigit() is True and 0 < int(message.text) < 11:
+			if 0 < int(message.text) < 11 and message.text.isdigit() is True:
 				message.text = await message_correct(message.text)		# виправляємо повідомлення у правильний формат
 
 			# emotion_state - змінна для запису стану. Оскільки в цьому блоку багато обробки повідомлення від юзера
@@ -193,7 +193,7 @@ async def bot_polling():
 			emotion = data['emotion']
 
 		# блок на випадок якщо користувач вводить дані не з клавіатури, але це коректне число
-		if message.text.isdigit() is True and 0 < int(message.text) < 11:
+		if 0 < int(message.text) < 11 and message.text.isdigit() is True:
 			message.text = await message_correct(message.text)  # виправляємо повідомлення у правильний формат
 
 		# отримуємо та обробляємо поточний емоційний стан користувача. Робимо зріз та прибираємо пробіли.
