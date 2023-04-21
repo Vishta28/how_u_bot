@@ -81,4 +81,6 @@ async def message_correct(message):
 	for elements in circles:
 		if int(message) in elements:
 			correct_message = message + elements[1]
+		else:
+			correct_message = message + '❌'
 	return correct_message
