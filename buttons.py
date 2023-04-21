@@ -53,11 +53,15 @@ none = ReplyKeyboardRemove()
 inl_keyR = InlineKeyboardMarkup(row_width=1)
 inl_keyR2 = InlineKeyboardMarkup(row_width=1)
 inl_key_state = InlineKeyboardMarkup(row_width=1)
+inl_keyRetarget = InlineKeyboardMarkup(row_width=1)
 
 inl_button1 = InlineKeyboardButton(text='Спробувати інші техніки 🔬',
 									callback_data='techniks')
+inl_button7 = InlineKeyboardButton(text='Скористатися ботом 🤖',
+									callback_data='techniks2')
 inl_button2 = InlineKeyboardButton(text='Поставити питання спеціалісту 🗣️',
 									callback_data='question')
+inl_button6 = InlineKeyboardButton(text='Відповісти на питання людині👤', url='https://ig.me/m/yaremenko_dmitry.psy')
 inl_button3 = InlineKeyboardButton(text='Підтримати проєкт 💸',
 									callback_data='donate')
 inl_button4 = InlineKeyboardButton(text='Додаткова допомога 👥',
@@ -68,6 +72,7 @@ inl_button5 = InlineKeyboardButton(text='Продовжити виконання
 inl_keyR.add(inl_button1, inl_button2, inl_button3)
 inl_keyR2.add(inl_button1, inl_button2, inl_button4)
 inl_key_state.add(inl_button2, inl_button5)
+inl_keyRetarget.add(inl_button7, inl_button6)
 
 async def message_correct(message):
 	correct_message = None

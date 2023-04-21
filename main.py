@@ -3,7 +3,8 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import InputFile
 from text import ALL_QUESTS, BOT_TEXT, PRE_QUESTS, RETARGET_QUESTIONS, MEDIA, CALL_BACK_TEXT
-from buttons import keyA, keyB, keyC, keyD_1, keyD_2, keyF, inl_keyR, inl_keyR2, keyE, keyG, none, inl_key_state, message_correct
+from buttons import keyA, keyB, keyC, keyD_1, keyD_2, keyF, inl_keyR, inl_keyR2, keyE, \
+	keyG, none, inl_key_state, message_correct, inl_keyRetarget
 from aiogram.contrib.fsm_storage.memory import MemoryStorage  # оперативна пам'ять
 from aiogram.dispatcher.filters.state import StatesGroup, State  # стан
 from aiogram.dispatcher import FSMContext  # запис змінних
@@ -48,7 +49,12 @@ async def bot_polling():
 		await bot.send_message(message.chat.id, BOT_TEXT['bot_description'][1])
 		await bot.send_message(message.chat.id, 'Наш Instagram де ви можете поставити запитання ➡ '
 												f'<a href="{INST_URL}">наш Instagram</a>', types.ParseMode.HTML)
-
+	@dp.message_handler(commands=['donate'], state='*')  # обробляємо основні команди бота
+	async def process_start_command(message: types.Message):
+		photo = 'https://drive.google.com/uc?id=1DTAk3e2FP0UWGWBxF3i4gdUnb89PVX0A'
+		await bot.send_photo(message.from_user.id, photo)
+		await asyncio.sleep(2)
+		await bot.send_message(CALL_BACK_TEXT[0], parse_mode='HTML')
 	@dp.message_handler(state=QuestStep.emotion)
 	async def choose_emotion(message: types.Message):
 		await bot.send_message(message.chat.id, "Підкажи, що ти зараз відчуваеш? 💙", reply_markup=keyB)
@@ -237,16 +243,16 @@ async def bot_polling():
 			await bot.send_message(message.chat.id, 'Дякую що скористались нашим ботом!', reply_markup=keyE)
 		await QuestStep.emotion.set()
 
-	@dp.callback_query_handler(text=['techniks', 'question', 'donate', 'tech2', 'donate2'], state='*')
+	@dp.callback_query_handler(text=['techniks', 'question', 'donate', 'tech2', 'donate2', 'question2', 'techniks2'], state='*')
 	async def callback_retarget(call: types.CallbackQuery):
-		if call.data == 'techniks':
+		if call.data == 'techniks' or call.data == 'techniks2':
 			await call.message.answer('Підкажи, що ти зараз відчуваеш? 💙', reply_markup=keyB)
 			await QuestStep.emotion_description.set()
 		elif call.data == 'question':
 			await call.message.answer('Ви можете перейти за посиланням на наш Instagram, '
-									'та задати ваше питання у дірект')
+									'та поставити ваше питання у дірект')
 			await asyncio.sleep(1)
-			await call.message.answer(f'Задати питання, клікай ➡ <a href="{INST_URL}">наш Instagram</a>', parse_mode='HTML')
+			await call.message.answer(f'Поставити питання, клікай ➡ <a href="{INST_URL}">наш Instagram</a>', parse_mode='HTML')
 		elif call.data == 'donate':
 			photo = 'https://drive.google.com/uc?id=1DTAk3e2FP0UWGWBxF3i4gdUnb89PVX0A'
 			await bot.send_photo(call.from_user.id, photo)
@@ -268,7 +274,7 @@ async def bot_polling():
 async def timer():  # функція котра відповідає за ретаргет та відлік часу
 	while True:
 		user_data = check_retarget()
-		await asyncio.sleep(21000)
+		await asyncio.sleep(10800)
 		print(user_data, '>>> user_data')
 
 		if len(user_data) > 0:
@@ -289,7 +295,7 @@ async def timer():  # функція котра відповідає за рет
 						pass
 				else:
 					try:
-						await bot.send_message(retarget_to_user, ret_question, reply_markup=inl_keyR)
+						await bot.send_message(retarget_to_user, ret_question, reply_markup=inl_keyRetarget)
 					except Exception as er:
 						print(er)
 						pass
