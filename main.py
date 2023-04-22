@@ -288,8 +288,8 @@ async def bot_polling():
 
 async def timer():  # функція котра відповідає за ретаргет та відлік часу
 	while True:
-		user_data = check_retarget()
 		await asyncio.sleep(10800)
+		user_data = check_retarget()
 		print(user_data, '>>> user_data')
 
 		if len(user_data) > 0:
