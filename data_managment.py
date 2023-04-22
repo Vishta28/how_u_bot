@@ -116,6 +116,7 @@ async def emotion_state_check(step, user_id, message):  # функція кот�
 			else:
 				return '10⚫'
 			previus_state = cursor.fetchone()
+		print(f'previus_state {previus_state}')
 		return (previus_state[0])
 	except Exception as er:
 		print(f'Error with postgres >>> {er}')
@@ -173,7 +174,7 @@ def check_retarget():
 		conn.autocommit = True
 		with conn.cursor() as cursor:  # курсор ходит по таблице и выполняет ('execute')
 			cursor.execute('''CREATE TABLE IF NOT EXISTS feelings(
-			user_id INTEGER PRIMARY KEY,
+			user_id BIGINT PRIMARY KEY,
 			name TEXT,
 			time TIMESTAMP,
 			emotion TEXT,

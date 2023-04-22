@@ -54,6 +54,7 @@ inl_keyR = InlineKeyboardMarkup(row_width=1)
 inl_keyR2 = InlineKeyboardMarkup(row_width=1)
 inl_key_state = InlineKeyboardMarkup(row_width=1)
 inl_keyRetarget = InlineKeyboardMarkup(row_width=1)
+inl_keyRetarget_shrt = InlineKeyboardMarkup(row_width=1)
 
 inl_button1 = InlineKeyboardButton(text='Спробувати інші техніки 🔬',
 									callback_data='techniks')
@@ -73,6 +74,7 @@ inl_keyR.add(inl_button1, inl_button2, inl_button3)
 inl_keyR2.add(inl_button1, inl_button2, inl_button4)
 inl_key_state.add(inl_button2, inl_button5)
 inl_keyRetarget.add(inl_button7, inl_button6)
+inl_keyRetarget_shrt.add(inl_button1)
 
 async def message_correct(message):
 	circles = [('1', '🟢'), ('2', '🟢'), ('3', '🟢'), ('4', '🟠'), ('5', '🟠'),
