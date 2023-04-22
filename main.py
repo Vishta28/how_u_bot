@@ -295,6 +295,7 @@ async def timer():  # функція котра відповідає за рет
 		if len(user_data) > 0:
 			for data in user_data:
 				retarget_to_user = data[0]
+				print(f'data[0]: {data[0]}')
 				if data[1] is not None:
 					ret_question = random.choice(RETARGET_QUESTIONS[data[1]])
 				else:
@@ -308,12 +309,14 @@ async def timer():  # функція котра відповідає за рет
 										'Пропонуємо вам завершити вправу, '
 										f'або задати своє питання у нашому</i> <a href="{INST_URL}">Instagram </a>'
 										, parse_mode=types.ParseMode.HTML, reply_markup=inl_keyRetarget_shrt)
+						print(f'smal_retarget_done to: {data[0]}')
 					except Exception as er:
 						print(er)
 						pass
 				else:
 					try:
 						await bot.send_message(retarget_to_user, ret_question, reply_markup=inl_keyRetarget)
+						print(f'lohg_retarget_done to: {data[0]}')
 					except Exception as er:
 						print(er)
 						pass
