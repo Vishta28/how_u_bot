@@ -97,7 +97,7 @@ async def bot_polling():
 				step = data['step']
 				emotion = data['emotion']
 			except:
-				step = 2
+				step = 1
 				emotion = await emotion_proxy(message.from_user.id)
 
 			# блок на випадок якщо користувач вводить дані не з клавіатури, але це коректне число
@@ -118,24 +118,14 @@ async def bot_polling():
 			markup = keyD_1 if step == 0 else keyD_2  # клавіатура техніка 1 та техніка 2 в залежності від етапу
 
 			last_check = await emotion_state_check(step=step, user_id=message.from_user.id, message=message.text)  # стан на попередньому етапі
-			print(f'last_chek {last_check} <> current_state {current_state}')
+			print(f'last_chek {last_check} <> current_state {current_state}, step{step}')
 
-			try:  # Обробляємо помилки оскільки час від часу виникає 'type_error'
-				if int(last_check[:-1]) != 0 and int(current_state[:-1]) > int(last_check[:-1]):
-					await bot.send_message(message.chat.id, 'Нам шкода що вас стан погіршився. 😔', reply_markup=keyG)
-					await asyncio.sleep(1)
-					print(f'im here {step}')
-					await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_key_state)
-					await QuestStep.emotion.set()
-				else:
-					step = int(step) + 1 if step != 2 else step
-					data['step'] = step
-					data['emotion'] = emotion
-					await bot.send_message(message.chat.id, PRE_QUESTS[emotion][step], reply_markup=markup, parse_mode='HTML')
-					await QuestStep.step1.set() if step == 1 else await QuestStep.step2.set()  # в залежності від поточного прогресу
-			except TypeError as te:
-				print(f'Та сама помилка: {te}')
-
+			if int(last_check[:-1]) != 0 and int(current_state[:-1]) > int(last_check[:-1]):
+				await bot.send_message(message.chat.id, 'Нам шкода що вас стан погіршився. 😔', reply_markup=keyG)
+				await asyncio.sleep(1)
+				await bot.send_message(message.chat.id, CALL_BACK_TEXT[1], reply_markup=inl_key_state)
+				await QuestStep.emotion.set()
+			else:
 				step = int(step) + 1 if step != 2 else step
 				data['step'] = step
 				data['emotion'] = emotion
@@ -295,7 +285,6 @@ async def timer():  # функція котра відповідає за рет
 		if len(user_data) > 0:
 			for data in user_data:
 				retarget_to_user = data[0]
-				print(f'data[0]: {data[0]}')
 				if data[1] is not None:
 					ret_question = random.choice(RETARGET_QUESTIONS[data[1]])
 				else:
@@ -309,22 +298,23 @@ async def timer():  # функція котра відповідає за рет
 										'Пропонуємо вам завершити вправу, '
 										f'або задати своє питання у нашому</i> <a href="{INST_URL}">Instagram </a>'
 										, parse_mode=types.ParseMode.HTML, reply_markup=inl_keyRetarget_shrt)
-						print(f'smal_retarget_done to: {data[0]}')
+						print(f'shrt_retarget_done: {data}')
 					except Exception as er:
 						print(er)
 						pass
 				else:
 					try:
 						await bot.send_message(retarget_to_user, ret_question, reply_markup=inl_keyRetarget)
-						print(f'lohg_retarget_done to: {data[0]}')
+						print(f'long_retarget_done: {data}')
 					except Exception as er:
 						print(er)
 						pass
 				update_retarget(data[0], time=datetime.now().replace(microsecond=0))
-				user_data.clear()
-				print('retarget done')
+				print(f'update: {data}')
 		else:
 			pass
+		user_data.clear()
+		print(f'retarget all done, data clear: {user_data}')
 
 async def main():
 	await asyncio.gather(timer(), bot_polling())
