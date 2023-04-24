@@ -109,18 +109,15 @@ async def emotion_state_check(step, user_id, message):  # функція кот�
 		with conn.cursor() as cursor:
 			if step == 1:
 				cursor.execute(f"SELECT pre_step FROM feelings WHERE user_id = {user_id}")
-				print(f'previus_state {cursor.fetchone()[0]}')  # return cursor.fetchone()[0]
-				return cursor.fetchone()[0]
 			elif message == 'Давай сробуємо  👍':
 				cursor.execute(f"SELECT step1 FROM feelings WHERE user_id = {user_id}")
-				print(f'previus_state {cursor.fetchone()[0]}')  # return cursor.fetchone()[0]
-				return cursor.fetchone()[0]
 			elif step == 2:
 				cursor.execute(f"SELECT step1 FROM feelings WHERE user_id = {user_id}")
-				print(f'previus_state {cursor.fetchone()[0]}')  # return cursor.fetchone()[0]
-				return cursor.fetchone()[0]
 			else:
 				return '10⚫'
+			previus_state = cursor.fetchone()
+		print(f'previus_state {previus_state}')
+		return (previus_state[0])
 	except Exception as er:
 		print(f'Error with postgres >>> {er}')
 	finally:
