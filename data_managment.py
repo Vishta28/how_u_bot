@@ -9,6 +9,7 @@ user = os.getenv('user')
 password = os.getenv('password')
 db_name = os.getenv('db_name')
 def create_table(user_id, name, time):
+	conn = None
 	try:
 		conn = psycopg2.connect(
 			host=host,
@@ -38,6 +39,7 @@ def create_table(user_id, name, time):
 			conn.close()
 
 def update_table(progress, emotion, feedback, time, user_id):
+	conn = None
 	try:
 		conn = psycopg2.connect(
 			host=host,
@@ -77,6 +79,7 @@ def update_table(progress, emotion, feedback, time, user_id):
 			conn.close()
 
 def update_retarget(user_id, time):
+	conn = None
 	try:
 		conn = psycopg2.connect(
 			host=host,
@@ -98,6 +101,7 @@ def update_retarget(user_id, time):
 			conn.close()
 
 async def emotion_state_check(step, user_id, message):  # функція котра відповідає за отрмання інформації про попередній стан користувача
+	conn = None
 	try:
 		conn = psycopg2.connect(
 			host=host,
@@ -125,6 +129,7 @@ async def emotion_state_check(step, user_id, message):  # функція кот�
 			conn.close()
 
 async def emotion_state_road(user_id):  # функція котра відповідає за отрмання інформації про усі стани користувача
+	conn = None
 	try:
 		conn = psycopg2.connect(
 			host=host,
@@ -145,6 +150,7 @@ async def emotion_state_road(user_id):  # функція котра відпов
 
 # функція (emotion_proxy) для блоку pre_step, вона необхідна на впипадок якщо proxy_state неможливо буде відкрити
 async def emotion_proxy(user_id):
+	conn = None
 	try:
 		conn = psycopg2.connect(
 			host=host,
@@ -161,9 +167,9 @@ async def emotion_proxy(user_id):
 		print(f'Error with postgres >>> {er}')
 	finally:
 		if conn is not None:
-			cursor.close()
 			conn.close()
 def check_retarget():
+	conn = None
 	try:
 		conn = psycopg2.connect(
 			host=host,
@@ -206,5 +212,4 @@ def check_retarget():
 		print(f'Error with postgres >>> {er}')
 	finally:
 		if conn is not None:
-			cursor.close()
 			conn.close()
