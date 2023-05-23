@@ -191,7 +191,7 @@ def check_retarget():
 			)''')
 			cursor.execute('SELECT retarget, time FROM feelings')
 			retarget_status = cursor.fetchall()
-			message_ready_time = []
+			message_ready_time = set()
 
 			for data in retarget_status:
 				now = datetime.now().replace(microsecond=0)
@@ -200,12 +200,12 @@ def check_retarget():
 				if data[0] != 'done' and now > bd + timedelta(hours=3):
 					cursor.execute(f"SELECT user_id, emotion, retarget FROM feelings WHERE time = '{data[1]}'")
 					small_retargert = cursor.fetchone()
-					message_ready_time.append(small_retargert)
+					message_ready_time.add(small_retargert)
 
 				elif now > bd + timedelta(days=2):
 					cursor.execute(f"SELECT user_id, emotion, retarget FROM feelings WHERE time = '{data[1]}'")
 					long_retargert = cursor.fetchone()
-					message_ready_time.append(long_retargert)
+					message_ready_time.add(long_retargert)
 		print('message_ready>>>', message_ready_time)
 		return message_ready_time
 	except Exception as er:
